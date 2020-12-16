@@ -1,6 +1,7 @@
 package ru.vniims.portal.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vniims.portal.domains.Role;
@@ -8,7 +9,6 @@ import ru.vniims.portal.domains.User;
 import ru.vniims.portal.repositories.UserRepository;
 
 import java.util.Collections;
-import java.util.Map;
 
 @Controller
 public class RegistrationController {
@@ -20,15 +20,16 @@ public class RegistrationController {
     }
 
     @GetMapping("/registration")
-    public String registration() {
+    public String registration(Model model) {
+        //model.addAttribute("message", "");
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String addUser(User user, Map<String, Object> model) {
+    public String addUser(User user, Model model) {
         User userDb = userRepository.findByUsername(user.getUsername());
         if (userDb != null) {
-            model.put("message", "User exists!");
+            model.addAttribute("message", "User exists!");
             return "registration";
         }
         user.setActive(true);

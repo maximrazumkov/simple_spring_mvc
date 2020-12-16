@@ -30,6 +30,9 @@ build/*
 # akka specific
 logs/*
 
+#uploads
+uploads/*
+
 # sbt specific
 target/
 project/boot
