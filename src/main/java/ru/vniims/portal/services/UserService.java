@@ -3,6 +3,7 @@ package ru.vniims.portal.services;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.vniims.portal.domains.Role;
@@ -15,17 +16,23 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final MailSender mailSender;
 
-    public UserService(UserRepository userRepository, MailSender mailSender) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, MailSender mailSender) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.mailSender = mailSender;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user;
     }
 
     public boolean addUser(User user) {
@@ -36,6 +43,7 @@ public class UserService implements UserDetailsService {
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         sendMessage(user);
         return true;
