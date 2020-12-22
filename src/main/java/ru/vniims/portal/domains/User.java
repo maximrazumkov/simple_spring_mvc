@@ -25,10 +25,6 @@ public class User implements Serializable, UserDetails {
 
     private boolean active;
 
-    @Transient
-    @NotBlank(message = "Password confirmation cannot be empty")
-    private String password2;
-
     @Email(message = "Email is not correct")
     @NotBlank(message = "Email cannot be empty")
     private String email;
@@ -127,13 +123,5 @@ public class User implements Serializable, UserDetails {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    public String getPassword2() {
-        return password2;
-    }
-
-    public void setPassword2(String password2) {
-        this.password2 = password2;
     }
 }
