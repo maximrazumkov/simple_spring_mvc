@@ -1,5 +1,6 @@
 package ru.vniims.portal.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    @Value("${hostname}")
+    private String hostname;
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -102,8 +106,9 @@ public class UserService implements UserDetailsService {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = String.format(
                     "Hello, %s! \n" +
-                            "Welcome to Sweater. Please, visit next link: http://localhost:8080/activate/%s",
+                            "Welcome to Sweater. Please, visit next link: http://%s/activate/%s",
                     user.getUsername(),
+                    hostname,
                     user.getActivationCode()
             );
 
